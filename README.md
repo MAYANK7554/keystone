@@ -6,9 +6,9 @@ A full-stack multi-turn AI chatbot built with **React (Vite + TypeScript)**, **F
 
 ## 1. Live URLs
 
-- **Frontend:** `https://<your-frontend-url>.vercel.app` *(update after deploying frontend)*
-- **Backend:** `https://<your-backend-url>.onrender.com` *(update after deploying backend)*
-- **Health Check:** `https://<your-backend-url>.onrender.com/health`
+- **Frontend:** `https://keystone-five-wheat.vercel.app/` *(update after deploying frontend)*
+- **Backend:** `https://keystone-tcf2.onrender.com/` *(update after deploying backend)*
+- **Health Check:** `https://keystone-tcf2.onrender.com/health`
 
 ---
 

@@ -4,11 +4,10 @@ import type {
   SessionMessagesResponse,
 } from './types';
 
-const envBase = (
-  import.meta as unknown as { env?: Record<string, string | undefined> }
-).env?.VITE_API_BASE_URL;
-
-export const API_BASE_URL = (envBase || 'http://localhost:8000').replace(/\/+$/, '');
+const rawBase = import.meta.env.VITE_API_BASE_URL;
+export const API_BASE_URL = (
+  rawBase && rawBase.trim() ? rawBase.trim() : 'http://localhost:8000'
+).replace(/\/+$/, '');
 
 export class ApiError extends Error {
   status: number;
