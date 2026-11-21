@@ -18,7 +18,7 @@ A full-stack multi-turn AI chatbot built with **React (Vite + TypeScript)**, **F
 1. Copy the example environment file and add at least two valid LLM API keys:
    ```bash
    cp .env.example .env
-   # Edit .env and set LLM_API_KEYS=keyA,keyB and LLM_MODEL=gemini/gemini-2.0-flash
+   # Edit .env and set LLM_API_KEYS=keyA,keyB and LLM_MODEL=groq/openai/gpt-oss-20b
    ```
 2. Start the entire stack (backend on `http://localhost:8000`, frontend on `http://localhost:3000`):
    ```bash
@@ -42,7 +42,7 @@ source .venv/bin/activate   # On Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 
 export LLM_API_KEYS="your_key_1,your_key_2"
-export LLM_MODEL="gemini/gemini-2.0-flash"
+export LLM_MODEL="groq/openai/gpt-oss-20b"
 export DATABASE_URL="sqlite:///./data/app.db"
 export ALLOWED_ORIGINS="http://localhost:3000,http://localhost:5173"
 export ENABLE_FAILURE_SIMULATION="true"
@@ -68,7 +68,7 @@ pytest -v
 ## 3. Design decisions
 
 ### Key Fallback & Resilience
-- **Ordered Key Pool (`key_1`, `key_2`, ...):** Keys from `LLM_API_KEYS` are loaded in deterministic order and assigned opaque IDs (`key_1`, `key_2`, ...). Raw API keys are never exposed in responses, error details, or logs. Optional `LLM_MODELS` allows pairing keys with distinct LiteLLM models (e.g. Gemini primary + Groq fallback) or sharing a single model across multiple keys.
+- **Ordered Key Pool (`key_1`, `key_2`, ...):** Keys from `LLM_API_KEYS` are loaded in deterministic order and assigned opaque IDs (`key_1`, `key_2`, ...). Raw API keys are never exposed in responses, error details, or logs. Optional `LLM_MODELS` allows pairing keys with distinct LiteLLM models (e.g. Groq primary + Gemini fallback) or sharing a single model across multiple keys.
 - **Automatic Failover:** On HTTP `429` (rate limit/quota), `5xx` (`500`, `502`, `503`, `504`), timeouts, connection errors, or provider auth/quota rejections from LiteLLM, the gateway automatically advances to the next key and increments `fallback_attempts`.
 - **Clean Error Handling:** If every key fails, the API returns HTTP `503` with `{"detail": "all providers unavailable"}` and rolls back / skips database persistence so failed requests never corrupt session history. Global FastAPI exception handlers guarantee JSON responses with `detail` and never leak stack traces or HTML error pages.
 - **Per-Request Failure Simulation:** When `ENABLE_FAILURE_SIMULATION=true`, the `X-Simulate-Failure` header injects synthetic `429`/`500`/`502`/`503` errors for targeted keys (`key_1=429`, `key_1=429, key_2=500`, `*=429`) strictly scoped to that single request without mutating global pool state. Cache lookup is bypassed whenever an active simulation header is supplied so failover is always exercised deterministically.
