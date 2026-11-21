@@ -1,6 +1,6 @@
 export type ResolutionSource = 'LIVE_INFERENCE' | 'LLM_CACHE';
 
-export interface MessageMetadata {
+export interface ChatMetadata {
   resolution_source: ResolutionSource;
   model: string;
   latency_ms: number;
@@ -12,35 +12,34 @@ export interface MessageMetadata {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: 'user' | 'assistant' | 'error';
   content: string;
-  timestamp?: string;
-  metadata?: MessageMetadata;
+  metadata?: ChatMetadata;
+  statusCode?: number;
 }
 
-export interface SessionSummary {
-  id: string;
-  label: string;
-  turnCount: number;
-}
-
-export interface HealthStatus {
+export interface HealthResponse {
   status: string;
   keys_configured: number;
   cache_enabled: boolean;
 }
 
-export interface ChatApiResponse {
+export interface ChatResponse {
   session_id: string;
   reply: string;
-  metadata: MessageMetadata;
+  metadata: ChatMetadata;
 }
 
-export interface SessionHistoryResponse {
+export interface SessionMessagesResponse {
   session_id: string;
   messages: Array<{
     role: 'user' | 'assistant';
     content: string;
-    metadata?: MessageMetadata;
+    metadata?: Partial<ChatMetadata> | null;
   }>;
+}
+
+export interface SessionTab {
+  id: string;
+  title: string;
 }
